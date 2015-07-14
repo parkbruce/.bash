@@ -1,0 +1,25 @@
+#!/bin/bash
+# faxing
+
+
+EXPECTED_ARGS=2
+E_BADARGS=85
+MODEM_PORT="/dev/ttyS2"
+
+
+if [ "$#" -ne 2 ]; then
+    echo "Usage: `basename $0` <phone number> <text-file>"
+    exit $E_BADARGS
+elif [ ! -f "$2" ]; then
+    echo "File $2 is not a text file"
+    exit $E_BADARGS
+fi
+
+fax make $2
+
+for f in $(ls $2.0*); do
+    file="$file $f"
+done
+
+efax -d "$MODEM_PORT" -t "T$1" $file
+# efax -d /dev/ttyS2 -o1 -t "T$1" $2.0*

@@ -1,0 +1,22 @@
+NOTES
+
+
+# make backup copy of all files
+for i in $(ls); do
+    cp $i $i.bak;
+done
+
+# number line cat
+cat $filename | nl
+{ echo 'This is a test'; cat $filename; } | nl
+
+# closing standard input with redirect operator
+cat mlist | wc -l <&-
+
+# File Descriptors
+0   standard input
+1   standard output
+2   standard error
+3-9 standard file descriptors
+
+$(<file) is the same as $(cat file) is the same as `cat file`

@@ -1,0 +1,74 @@
+#!/bin/bash
+# brownian
+
+#TODO 9-13
+
+PASSES=500
+ROWS=10
+RANGE=3
+POS=0
+RANDOM=$$
+
+
+declare -a slots
+
+initSlots() {
+    COUNT=21
+    for i in $(seq $COUNT); do
+        slots[$i]=0
+    done
+}
+
+showSlots() {
+   echo -n " "
+   for slot in ${slots[@]}; do
+       printf "%3d" $slot
+   done
+
+   echo # Row of slots:
+   echo " |__|__|__|__|__|__|__|__|__|__|__|__|__|__|__|__|__|__|__|__|__|"
+   echo "                                ||"
+
+   #  Note that if the count within any particular slot exceeds 99,
+   #+ it messes up the display.
+   #  Running only (!) 500 passes usually avoids this.
+}
+
+move() {
+    MOVE=$(( RANDOM%RANGE ))
+    case "$MOVE" in 
+        0 ) ;;
+        1 ) ((POS--)) ;;
+        2 ) ((POS++)) ;;
+        * ) echo -n "Error " ;;
+    esac
+}
+
+play() {
+    for i in $(seq $ROWS); do
+        move
+    done
+
+    ((POS+=11))  # Why 11, and not 10?
+    ((slots[$POS]++))
+
+    #echo -n "$POS "
+}
+
+run() {
+    for i in $(seq $PASSES); do
+        play
+        POS=0  # Reset to 0. Why?
+    done
+}
+
+
+clear
+echo "brownian"
+echo
+initSlots
+run
+showSlots
+
+
+exit $?

@@ -1,0 +1,203 @@
+#!/bin/bash
+# examples
+
+
+E_NOFILE=66
+E_BADARGS=85
+E_XCD=86
+E_NOTROOT=87
+
+RANDOM=$$
+
+LOG_DIR=/var/log
+
+
+checkRoot() {
+    [ "$UID" -ne 0 ] && exit $E_NOTROOT
+    # [ $(id -nu) != root ] && exit $E_NOTROOT
+}
+
+
+listArgs() {
+    if [ ! -n "$1" ]; then
+        echo "Usage: `basename $0` arg1 arg2 etc."
+        exit $E_BADARGS
+    fi
+
+    clear
+    # "$*" sees all args as single word
+    for arg in "$*"; do
+        echo "$arg"
+    done
+    echo
+    # $* sees args as separate words
+    for arg in $*; do
+        echo "$arg"
+    done
+    echo
+    # "$@" sees args as separate words
+    for arg in "$@"; do
+        echo "$arg"
+    done
+    echo
+    # $@ sees args as separate words
+    for arg in $@; do
+        echo "$arg"
+    done
+}
+
+
+changeDirectory() {
+    if [ "$#" -ne 1 ]; then
+        echo "Usage: `basename $0` <directory>"
+        exit $E_BADARGS
+    fi
+    cd $1
+    if [ "$1" != "$PWD" ]; then
+        echo "Can't change to $1"
+        exit $E_XCD
+    fi
+}
+
+
+cleanup() {
+    checkRoot
+    #case $1 in
+        #*[!0-9]* )
+            #echo "Usage: `basename $0` N"
+            #exit $E_BADARGS
+            #;;
+    #esac
+    local line_count=${1:-50}
+
+    changeDirectory $LOG_DIR
+    tail -n $line_count messages > mesg.temp
+    mv mesg.temp messages
+    > wtmp
+}
+
+
+binGrep() {
+    if [ "$#" -ne 2 ]; then
+        echo "Usage: `basename $0` <pattern> <filename>"
+        exit $E_BADARGS
+    elif [ ! -f "$2" ]; then
+        echo "File \"$2\" does not exist"
+        exit $E_NOFILE
+    fi
+
+    IFS=$'\012'
+    #for word in $(strings "$2" | grep "$1"); do
+        #echo $word
+    #done
+    strings "$2" | grep "$1" | tr -s "$IFS" '[\n*]'
+}
+
+
+flipCoin() {
+    local heads=0
+    local tails=0
+    record() {
+        case "$1" in
+            0 ) ((heads++)) ;;
+            1 ) ((tails++)) ;;
+        esac
+    }
+    local count=${1:-1000}
+    for i in $(seq $count); do
+        side=$((RANDOM%2))  # 2 sides
+        record $side
+    done
+    clear
+    echo "RESULTS"
+    echo
+    echo "heads: $heads"
+    echo "tails: $tails"
+}
+
+
+rollDice() {
+    local ones=0
+    local twos=0
+    local threes=0
+    local fours=0
+    local fives=0
+    local sixes=0
+    record() {
+        case "$1" in
+            0 ) ((ones++)) ;;
+            1 ) ((twos++)) ;;
+            2 ) ((threes++)) ;;
+            3 ) ((fours++)) ;;
+            4 ) ((fives++)) ;;
+            5 ) ((sixes++)) ;;
+        esac
+    }
+    local count=${1:-1000}
+    for i in $(seq $count); do
+        pip=$((RANDOM%6))  # 6 pips
+        record $pip
+    done
+    clear
+    echo "RESULT"
+    echo
+    echo "1 = $ones"
+    echo "2 = $twos"
+    echo "3 = $threes"
+    echo "4 = $fours"
+    echo "5 = $fives"
+    echo "6 = $sixes"
+}
+
+
+#TODO prints out entire file
+findString() {
+    echo $#
+    if [ "$#" -ne 2 -a "$#" -ne 1 ]; then
+        echo "Usage: `basename $0` <fstring> [folder]"
+        exit $E_BADARGS
+    fi
+    local fstring=$1
+    local folder=${2:-$PWD}
+    for f in $(find $folder -type f -name '*' | sort); do
+        strings -f $f | grep "$fstring" | sed -e "s%$folder%%"
+    done
+}
+
+
+getoptSimple() {
+    echo "getoptSimple()"
+    echo "Parameters are '$*'"
+    until [ -z "$1" ]; do
+        echo "Processing parameter of: '$1'"
+        if [ ${1:0:1} = '-' ]; then
+            tmp=${1:1}
+            parameter=${tmp%%=*}
+            value=${tmp##*=}
+            echo "Parameter: '$parameter'"
+            echo "Value:     '$value'"
+            eval $parameter=$value
+        fi
+        shift
+    done
+}
+
+
+randomString() {
+    local string=${1:-$$}
+    md5sum_string=$(echo "$string" | md5sum)
+    echo "${md5sum_str:2:8}"
+}
+
+
+renameFileExtension() {
+    if [ "$#" -ne 2 ]; then
+        echo "Usage: `basename $0` <old> <new>"
+        exit $E_BADARGS
+    fi
+    local old=$1
+    local new=$2
+    for f in *.$old; do
+        mv $f ${f%$old}$new
+    done
+}

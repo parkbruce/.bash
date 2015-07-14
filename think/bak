@@ -1,0 +1,12 @@
+#!/bin/bash
+# bak
+
+# Backs up all files in current directory modified within 24 hours
+#+ in a "tarball" (tarred and gzipped file).
+
+archive=${1:-backup-$(date +%m-%d-%Y)}
+
+# tar cvf - `find . -mtime -1 -type f - print` > $archive.tar
+find . -mtime -1 -type f -print0 | xargs -0 tar rvf "$archive.tar"
+gzip $archive.tar
+echo "Directory $PWD backed up in archive file \"$archive.tar.gz\"."

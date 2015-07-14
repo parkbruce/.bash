@@ -1,0 +1,17 @@
+#!/bin/bash
+# symlinks
+
+
+folder=${1:-$PWD}
+
+echo "symbolic links in \"$folder\""
+
+# OLDIFS=$IFS
+# IFS=:
+# IFS=''
+
+# for f in "$(find $directory -type l -printf "%p$IFS")"; do
+# for f in $(find $directory -type l); do
+for f in "$(find $directory -type l)"; do
+    echo "$f"
+done | sort

@@ -1,0 +1,101 @@
+#!/bin/bash
+# notes
+
+#TODO review random
+
+
+E_BADARGS=85
+
+
+# CONVERT MAC TO PBM
+[ -n "$1" ] && directory=$1 || directory=${PWD}
+for f in $directory/*.mac; do
+    macptopbm $ > "${f%.*c}.pbm"
+    rm -f $f
+done
+
+
+# LIST-GLOB
+for f in *; do
+    ls -l "$f"
+done
+for f in [jx]*; do
+   ls -l "$f"
+done
+
+
+# PATTERN MATCHING
+var=abcd12345abc6789
+pattern1=a*c
+echo "${var#$pattern1}"
+echo "${var##$pattern1}"
+pattern2=b*9
+echo "${var%$pattern2}"
+echo "${var%%$pattern2}"
+
+
+# TRAPTEST
+#trap "echo Booh!" SIGINT SIGTERM
+#echo "pid is $$"
+#while :; do
+    #sleep 2
+#done
+
+
+# UPPERCASE
+tr 'a-z' 'A-Z'
+
+
+# LENGTH
+var01=abcdEFGH28ij
+echo "var01 = ${var01}"
+echo "Length of var01 = ${#var01}"
+
+var02="abcd EFGH28ij"
+echo "var02 = ${var02}"
+echo "Length of var02 = ${#var02}"
+
+echo "${#@} cmd-line args"
+echo "${#*} cmd-line args"
+
+
+# USAGE
+: ${1?"Usage: $0 ARGUMENT"}
+
+echo "these two lines echo only if parameter given"
+echo "cmd-line parameter = \"$1\""
+
+
+# USERLIST
+PW_FILE=/etc/passwd
+
+#for user in $(cat $PW_FILE); do
+    #echo $user
+#done
+# echo $(awk 'BEGIN{FS=":"}{print $1}' < "$PW_FILE")
+
+for username in $(awk 'BEGIN{FS=":"}{print $1}' < "$PW_FILE"); do
+    echo "username = $username"
+done
+
+
+# VAR MATCH
+v=abc1234zip1234abc
+echo "$v0"
+echo "${v/#abc/ABCDEF}"
+echo "${v/%abc/ABCDEF}"
+echo "${v/#123/000}"
+echo "${v/%123/000}"
+
+
+# NESTED LOOP
+outer=1
+for a in {1..5}; do
+    echo "$outer"
+    inner=1
+    for b in {1..5}; do
+        echo "$inner"
+        ((inner++))
+    done
+    ((outer++))
+done

@@ -1,0 +1,54 @@
+#!/bin/bash
+# time-related
+
+
+E_TIMEOUT=81
+
+simpleTimer1() {
+    local timelimit=${1:-3}
+    clear
+    read -t $timelimit var
+    echo
+    [ -z "$var" ] && exit $E_TIMEOUT || echo "var=$var"
+}
+
+
+simpleTimer2() {
+    local timelimit=${1:-3}
+    local timer_interrupt=14
+    local answer
+    timerOn() {
+        sleep $timelimit && kill -s 14 $$ &
+    }
+    int14Vector() {
+        answer="TIMEOUT"
+        # printAnswer
+        exit $timer_interrupt
+    }
+    trap int14Vector $timer_interrupt
+    clear
+    echo -n "Name: "
+    timerOn
+    read answer
+    [ "$answer" = TIMEOUT ] && exit $E_TIMEOUT
+    kill $!
+}
+
+
+simpleTimer3() {
+    local timelimit=${1:-3}
+    timedoutRead() {
+        timeout=$1
+        var=$2
+        old_tty_settings=`stty -g`
+        stty -icanon min 0 time ${timeout}0
+        read $var
+        stty "$old_tty_settings"
+    }
+    clear
+    echo
+    echo -n "Name: "
+    timedoutRead $timelimit name
+    echo
+    [ -z "$name" ] && exit $E_TIMEOUT || echo "hi $name"
+}

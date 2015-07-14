@@ -1,0 +1,19 @@
+#!/bin/bash -x
+# substring-extraction
+
+
+string=23skidoo1
+
+echo ${string:2:4}
+
+echo | awk '
+{ print substr("'"${string}"'",3,4)
+}
+'
+
+echo
+
+echo | awk '
+{ print index("'"${string}"'", "skid")
+}
+'

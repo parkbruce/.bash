@@ -1,0 +1,24 @@
+#!/bin/bash
+# fileinfo
+
+
+FILES="/usr/sbin/accept
+/usr/sbin/pwck
+/usr/sbin/chroot
+/usr/bin/fakefile
+/sbin/badblocks
+/sbin/ypbind"
+
+clear
+echo "fileinfo"
+echo
+for f in $FILES; do
+    if [ ! -e "$f" ]; then
+        echo "$f does not exist"
+        echo
+        continue
+    fi
+    ls -l $f
+    whatis $(basename $f)
+    echo
+done

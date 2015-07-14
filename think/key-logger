@@ -1,0 +1,16 @@
+#!/bin/bash
+# key-logger
+
+key="no value yet"
+while true; do
+    clear
+    echo "Bash Extra Keys Demo. Keys to try:"
+    echo
+    echo "* Insert, Delete, Home, End, Page_Up and Page_Down"
+    echo "* The four arrow keys"
+    echo "* Tab, enter, escape, and space key"
+    echo "* The letter and number keys, etc."
+    echo
+    echo "    d = show date/time"
+    echo "    q = quit"
+    echo "==============================="

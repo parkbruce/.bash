@@ -1,0 +1,17 @@
+#!/bin/bash
+# bg-loop
+
+for i in $(seq 10); do
+    echo -n "$i "
+    sleep 1
+done &  # Run this loop in bg.
+        # Will sometimes execute after second loop.
+
+echo  # sometimes will not display
+
+for i in $(seq 11 20); do
+    echo -n "$i "
+    sleep 1
+done
+
+echo  # someitmes will not display

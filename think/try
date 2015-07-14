@@ -1,0 +1,18 @@
+#!/bin/bash
+# try
+
+
+LIMIT=19
+
+echo
+echo "Printing 1 - 20 (not 3 and 11)"
+
+a=0
+
+while [ $a -le "$LIMIT" ]; do
+    ((a++))
+    if [ "$a" -eq 3 -o "$a" -eq 11 ]; then
+        continue
+    fi
+    echo -n "$a "
+done
